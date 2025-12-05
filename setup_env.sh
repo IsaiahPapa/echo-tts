@@ -16,7 +16,7 @@ TORCH_INDEX_URL="https://download.pytorch.org/whl/${CUDA_TAG}"
 
 echo "--- 1. INSTALLING SYSTEM DEPENDENCIES ---"
 sudo apt-get update
-sudo apt-get install -y wget curl git ffmpeg
+sudo apt-get install -y wget curl git ffmpeg build-essential
 
 echo "--- 2. CONFIGURING CONDA ---"
 
