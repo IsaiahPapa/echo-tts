@@ -88,6 +88,32 @@ async def lifespan(app: FastAPI):
         models["model"] = compile_model(models["model"])
         models["fish_ae"] = compile_fish_ae(models["fish_ae"])
         logger.info("SYSTEM: Compilation complete.")
+        # 3. WARMUP (Critical to prevent lag for first user)
+        logger.info("SYSTEM: Warming up CUDA kernels...")
+        dummy_audio = torch.zeros(1, 44100).cuda() # 1 sec silence
+        
+        # Force the exact shapes used in generation to trigger compilation
+        s_latent, s_mask = get_speaker_latent_and_mask(
+            models["fish_ae"], models["pca_state"], dummy_audio,
+            max_speaker_latent_length=6400, pad_to_max=True
+        )
+        t_ids, t_mask = get_text_input_ids_and_mask(
+            ["Warmup"], max_length=768, device="cuda", pad_to_max=True
+        )
+        
+        with torch.no_grad():
+            sample_euler_cfg_independent_guidances(
+                model=models["model"],
+                speaker_latent=s_latent, speaker_mask=s_mask,
+                text_input_ids=t_ids, text_mask=t_mask,
+                rng_seed=0, num_steps=10, # Low steps for warmup
+                cfg_scale_text=3.0, cfg_scale_speaker=8.0,
+                cfg_min_t=0.5, cfg_max_t=1.0, truncation_factor=0.8,
+                rescale_k=None, rescale_sigma=None,
+                speaker_kv_scale=None, speaker_kv_max_layers=None, speaker_kv_min_t=None,
+                sequence_length=640
+            )
+        logger.info("SYSTEM: Warmup Complete.")
 
         models["is_ready"] = True
         logger.info("SYSTEM: Echo TTS Ready.")
