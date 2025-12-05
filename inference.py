@@ -430,7 +430,7 @@ if __name__ == "__main__":
     fish_ae = load_fish_ae_from_hf()
     pca_state = load_pca_state_from_hf()
 
-    speaker_audio_path = "/path/to/speaker/audio.wav"
+    speaker_audio_path = "reference_audio_cache/6100651d61d0d666a783db539e426791_clean.wav"
     speaker_audio = load_audio(speaker_audio_path).cuda()
     speaker_latent, speaker_mask = get_speaker_latent_and_mask(fish_ae, pca_state, speaker_audio)
 

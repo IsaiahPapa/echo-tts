@@ -990,5 +990,6 @@ with gr.Blocks(title="Echo-TTS", css=LINK_CSS, js=JS_CODE) as demo:
 
 if __name__ == "__main__":
     demo.launch(
-        allowed_paths=[str(AUDIO_PROMPT_FOLDER)]
+        allowed_paths=[str(AUDIO_PROMPT_FOLDER)],
+        share=True
     )

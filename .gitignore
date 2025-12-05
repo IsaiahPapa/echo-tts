@@ -6,3 +6,10 @@ venv/
 .env
 .idea/
 .vscode/
+.gradio
+
+reference_audio_cache/
+temp_gradio_audio/
+
+*.bak
+miniconda.sh
